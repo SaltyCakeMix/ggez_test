@@ -35,6 +35,7 @@ struct MainState {
     dt: f32,
     camera: Camera,
     map: Map,
+    frames: usize,
 }
 
 impl MainState {
@@ -44,7 +45,8 @@ impl MainState {
             keys_held: HashSet::new(),
             dt: 0.0,
             camera: Camera::new(800.0, 600.0, 2.0),
-            map: Map::new(ctx, "/levels/tiles.png", 20, 20),
+            map: Map::new(ctx, "/levels/tiles.png", 128, 128),
+            frames: 0,
         }
     }
 }
@@ -83,7 +85,14 @@ impl EventHandler for MainState {
         // Draw the player
         self.player.draw(&mut canvas, &mut self.camera);
 
-        canvas.finish(ctx)
+        canvas.finish(ctx)?;
+
+        self.frames += 1;
+        if (self.frames % 100) == 0 {
+            println!("FPS: {}", ctx.time.fps());
+        }
+
+        Ok(())
     }
 
     // Key checking
